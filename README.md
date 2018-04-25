@@ -26,7 +26,7 @@ conda install -c anaconda joblib
 
 First step to do is to install the requirement for the project. We recommend to use Anaconda Navigator to install the python environment in the OS Windows. 
 
-Next, open the script [agoda_build_directory.py]agoda_build_directory.py) and change the script in the configuration section to match the settings that should be on your computer.
+Next, open the script [agoda_build_directory.py](agoda_build_directory.py) and change the script in the configuration section to match the settings that should be on your computer.
 For example :
 ```
 ...
@@ -35,13 +35,15 @@ firefox_driver_path = 'YOUR DRIVER PATH' #setup the path of gecko driver
 city_code = '17193' #agoda city code 17193 for Bali, Indonesia
 cIn = '2018-07-08' #set the default check-in date 
 cOut = '2018-07-09' #set the default check-out date
+output_path = "resBALI_"+cIn+".xlsx"
 ...
 ```
+After that, run the script and wait until the process is complete. The [agoda_build_directory.py](agoda_build_directory.py) will generate accomodation directory as the crawling results from agoda with basic information (links, hotel name, star rating, and score). This directory, will be used to get more information from every hotel page, like remaining rooms available, year opened, etc.
+
+To access every hotel page links that have been available in the crawling directory, we used  the [agoda_parallel_bali.py](agoda_parallel_bali.py). Configure the script first, then run the script in daily basis to capture the information about remaining rooms available everyday. To make it easy, we can configure the scheduler task to run [agoda_parallel_bali.py](agoda_parallel_bali.py) automatically.
 
 Note* :
 Stable Internet Access is very necessary in order to make the crawling process run without any obstacle.
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Authors
 

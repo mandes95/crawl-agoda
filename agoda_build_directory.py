@@ -172,10 +172,12 @@ firefox_driver_path = 'D:\\Python Project\\geckodriver.exe' #setup the path of g
 city_code = '17193' #agoda city code for Bali, Indonesia
 cIn = '2018-07-08' #set the default check-in date 
 cOut = '2018-07-09' #set the default check-out date
+output_path = "resBALI_"+cIn+".xlsx"
 looping_ = 200 #we assume that the number of page are less than 200
+
 
 #running
 cek4 = CrawlHotelListFast(cIn=cIn,cOut=cOut,city=city_code,looping=looping_,driver_path=firefox_driver_path) #build the objects
 cek4.crawl(detail=2,type="city") #start the crawling process
 result_bali2 = cek4.resData.drop_duplicates(subset=['link','name']) ##to make sure that there are no duplicate
-result_bali2.to_excel("resBALI_"+cIn+".xlsx",encoding='utf-8') #import to excel
+result_bali2.to_excel(output_path,encoding='utf-8') #import to excel
