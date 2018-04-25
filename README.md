@@ -40,7 +40,10 @@ output_path = "resBALI_"+cIn+".xlsx"
 ```
 After that, run the script and wait until the process is complete. The [agoda_build_directory.py](agoda_build_directory.py) will generate accomodation directory as the crawling results from agoda with basic information (links, hotel name, star rating, and score). This directory, will be used to get more information from every hotel page, like remaining rooms available, year opened, etc.
 
-To access every hotel page links that have been available in the crawling directory, we used  the [agoda_parallel_bali.py](agoda_parallel_bali.py). Configure the script first, then run the script in daily basis to capture the information about remaining rooms available everyday. To make it easy, we can configure the scheduler task to run [agoda_parallel_bali.py](agoda_parallel_bali.py) automatically.
+To access every hotel page links that have been available in the crawling directory, we used  the [agoda_parallel_bali.py](agoda_parallel_bali.py). Configure the script first, then run the script in daily basis to capture the information about remaining rooms available everyday. To make it easy, we can configure the task scheduler to run [agoda_parallel_bali.py](agoda_parallel_bali.py) automatically.
+
+Tutorial to setup the task scheduler can be seen on the following page:
+[https://stackoverflow.com/questions/44727232/scheduling-a-py-file-on-task-scheduler-in-windows-10](Stackoverflow - Python Scheduler)
 
 Note* :
 Stable Internet Access is very necessary in order to make the crawling process run without any obstacle.
