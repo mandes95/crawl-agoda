@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Apr  8 14:49:56 2018
+Created on Fri Apr 20 12:46:06 2018
 
-@author: Putra
-experiment in denpasar city
+@author: Amanda Pratama Putra
+
+#dependency :
+pandas, selenium, time, threading, joblib
+using python 2.7
+
+the task of this script is to crawl the information from links (crawling directory) in parallel processing. 
+The purpose of parallel processing is to increase the speed and performance of our robots and also to maximize the potential of CPU and Memory
 """
+
 import numpy as np
 import datetime
 import time
@@ -13,8 +20,9 @@ from selenium import webdriver
 import threading
 from joblib import Parallel, delayed
 
+##define the class for Hotels
 class Hotel(object):
-    name = ""
+    name = "" 
     address = ""
     stars = ""
     price = 0
@@ -56,11 +64,12 @@ class Hotel(object):
             'opened':self.opened
         }
 
-
+##for parallel processing
 def unwrap_self(arg, **kwarg):
     return CrawlParallelURL.scrape(*arg, **kwarg)
 
 ##depend with class hotel
+#define the crawler class
 class CrawlParallelURL:
     hotels = []
     result = []
@@ -68,16 +77,18 @@ class CrawlParallelURL:
     drivers = {}
     delay = 3
     time = ""
-    core = -1
-    cIn = ""
-    mcIn = ""
+    core = -1 #number of cores that will be used for parallel processing
+    cIn = "" #date to crawl the room left
+    mcIn = "" #default date in the hotel links from crawling directory
+    driver_path = "" 
 
-    def __init__(self, links=[], cIn = "2018-04-08",mcIn="2018-04-08", delay=10,core=-1):
+    def __init__(self, links=[], cIn = "2018-04-08",mcIn="2018-04-08", delay=10,core=-1,driver_path=""):
         self.delay = delay
         self.links = links
         self.core = core
         self.cIn = cIn
         self.mcIn = mcIn
+        self.driver_path = driver_path
 
     def crawl_data(self,driver):
         try:
@@ -146,27 +157,23 @@ class CrawlParallelURL:
             pass
 
     def scrape(self,URL):
+        #replace the default date in the link with the current date
         URL = URL.replace(self.mcIn,self.cIn)
-        #firefox_profile = webdriver.FirefoxProfile()
-        #firefox_profile.set_preference('permissions.default.image', 2)
-
-        #firefoxOptions = webdriver.FirefoxOptions()
-        #firefoxOptions.set_headless()
-
+        
+        #configuration for chrome driver
         option = webdriver.ChromeOptions()
         chrome_prefs = {}
         option.experimental_options["prefs"] = chrome_prefs
         chrome_prefs["profile.default_content_settings"] = {"images": 2}
         option.set_headless()
 
+        #activate the robot
         try:
             driver = self.drivers[threading.current_thread().name]
         except KeyError:
-            #self.drivers[threading.current_thread().name] = webdriver.Firefox(executable_path='D:\\Python_Project\\gecko\\geckodriver.exe',firefox_profile=firefox_profile,firefox_options=firefoxOptions)
-            #self.drivers[threading.current_thread().name] = webdriver.Firefox(executable_path='D:\\Python Project\\geckodriver.exe',firefox_profile=firefox_profile,firefox_options=firefoxOptions)
-
-            self.drivers[threading.current_thread().name] = webdriver.Chrome(executable_path='D:\\1. Mandes\\MyCloud\\OneDrive\\Work\\python-crawl\\chromedriver.exe',chrome_options=option)
+            self.drivers[threading.current_thread().name] = webdriver.Chrome(executable_path=self.driver_path,chrome_options=option)
             driver = self.drivers[threading.current_thread().name]
+        
         driver.get(URL)
         self.crawl_data(driver)
 
@@ -181,8 +188,7 @@ class CrawlParallelURL:
         self.result = pd.DataFrame.from_records([hotel.to_dict() for hotel in self.hotels])
 
         for driver in self.drivers.values():
-            driver.quit()
-
+            driver.quit() #close the robot
 
 
 current_year = (datetime.datetime.now().strftime("%Y"))
@@ -193,21 +199,24 @@ tomorrow_year = (datetime.datetime.now() + datetime.timedelta(days=1)).strftime(
 tomorrow_month = (datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%m")
 tomorrow_day = (datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%d")
 
-cIn = current_year+'-'+current_month+'-'+current_day
-cOut = tomorrow_year+'-'+tomorrow_month+'-'+tomorrow_day
+#setup for driver
+cur_driver_path = "D:\\1. Mandes\\MyCloud\\OneDrive\\Work\\python-crawl\\chromedriver.exe" #define the chrome driver path
+out_dir_path = "D:\\1. Mandes\\MyCloud\\OneDrive\\Work\\" #define the directory excel crawling result
+crawl_dir_path = "D:\\1. Mandes\\MyCloud\\OneDrive\\Work\\final_directory_bali_link.xlsx" #define the crawling directory path that have the links of the hotel
 
-hotels = pd.read_excel('D:\\1. Mandes\\MyCloud\\OneDrive\\Work\\master_resdsp_2018-04-09April.xlsx')
+cIn = current_year+'-'+current_month+'-'+current_day #get the current date
 
-links = hotels.iloc[:]['link'].drop_duplicates()
+hotels = pd.read_excel(crawl_dir_path)
 
-move_on = 300
+links = hotels.iloc[:]['link'].drop_duplicates() #get the links from crawling directory, make sure that the links are not duplicate
 
-for i in range(1,2):
-    a = (i-1)*move_on 
-    b = i*move_on-1
-    print(a," - ",b)
-    links_ = links[a:b]
-    testing1 = CrawlParallelURL(links_,core=4,cIn=cIn,mcIn="2018-04-09")
-    testing1.start_crawl()
-    result=testing1.result.drop_duplicates()
-    result.to_excel("D:\\1. Mandes\\MyCloud\\OneDrive\\Work\\loop "+str(i)+" master_resdsp_"+cIn+"April full.xlsx",encoding='utf-8')
+#assume, the number of links is not bigger than 5.600. We divide the crawling to several loops, to make sure that the memory is not leak
+for i in range(1,15):
+    a = (i-1)*400
+    b = i*400-1
+    print(a," - ",b) #see the progress
+    links_ = links[a:b] #define the index of links to process within the loop
+    testing1 = CrawlParallelURL(links_,core=4,cIn=cIn,mcIn="2018-07-08",driver_path=cur_driver_path) #define the objects
+    testing1.start_crawl() #call the function to start crawling
+    result=testing1.result.drop_duplicates() #get the result
+    result.to_excel(out_dir_path+"loop "+str(i)+" master_resBali_"+cIn+".xlsx",encoding='utf-8') #export the data to excel data format
