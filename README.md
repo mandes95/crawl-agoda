@@ -1,10 +1,10 @@
-# Big Data For Tourism Statisctics : Crawling Agoda
+# Big Data For Tourism Statistics : Crawling Agoda
 
 As part of the drive towards innovation and exploiting new sources of data, we are currently analyzing alternative sources of data for accommodation statistics using web scraping technique. Web scraping is defined as an automated procedure of extracting relevant items of information from websites and turning it into structured information that can be used for following analysis.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine. 
+These instructions will get you a copy of the project up and running on your local machine.
 
 ### Prerequisites
 
@@ -24,7 +24,7 @@ conda install -c anaconda joblib
 
 ### Running The Script & Start The Robots
 
-First step to do is to install the requirement for the project. We recommend to use Anaconda Navigator to install the python environment in the OS Windows. 
+First step to do is to install the requirement for the project. We recommend to use Anaconda Navigator to install the python environment in the OS Windows.
 
 Next, open the script [agoda_build_directory.py](agoda_build_directory.py) and change the script in the configuration section to match the settings that should be on your computer.
 For example :
@@ -33,7 +33,7 @@ For example :
 firefox_driver_path = 'YOUR DRIVER PATH' #setup the path of gecko driver
 
 city_code = '17193' #agoda city code 17193 for Bali, Indonesia
-cIn = '2018-07-08' #set the default check-in date 
+cIn = '2018-07-08' #set the default check-in date
 cOut = '2018-07-09' #set the default check-out date
 output_path = "resBALI_"+cIn+".xlsx"
 ...
@@ -51,9 +51,8 @@ Stable Internet Access is very necessary in order to make the crawling process r
 ## Authors
 
 * **Amanda Pratama Putra**
-* **Heny Wulandari** 
+* **Heny Wulandari**
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
